@@ -1,2 +1,2 @@
-# cors-poc
-PoC for CORS testing
+# Binance PoC
+This repo contains Proof of Concept files for testing Binance endpoints.
