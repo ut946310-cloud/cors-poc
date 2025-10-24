@@ -1,69 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>cors-poc — Binance PoC</title>
+  <meta charset="UTF-8" />
+  <title>✅ GitHub Pages CORS Test</title>
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; max-width:900px; margin:30px auto; line-height:1.5; color:#111 }
-    header { border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:18px }
-    h1{ margin:0 0 6px 0; font-size:24px }
-    .muted{ color:#555 }
-    pre { background:#f6f8fa; padding:12px; border-radius:6px; overflow:auto }
-    .box{ border:1px solid #eee; padding:14px; border-radius:8px; margin:12px 0; }
-    a.button { display:inline-block; background:#0366d6; color:#fff; padding:8px 12px; border-radius:6px; text-decoration:none }
-    ul { margin:8px 0 8px 20px; }
-    code { background:#f1f1f1; padding:2px 6px; border-radius:4px; }
+    body { font-family: sans-serif; margin: 40px; }
+    button { padding: 10px 20px; border: none; border-radius: 6px; background: #2d8cf0; color: #fff; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 10px; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>cors-poc</h1>
-    <div class="muted">Binance PoC — Proof of Concept files for CORS and API checks</div>
-  </header>
+  <h2>✅ GitHub Pages CORS Test</h2>
+  <p>This page tests CORS responses from Binance endpoints.</p>
 
-  <section class="box">
-    <h2>About</h2>
-    <p>This repository contains scripts and sample output used to test CORS headers and API endpoints for <strong>web3api.binance.com</strong> and related hosts. Use these files only with a test account you own and follow the program rules.</p>
-  </section>
+  <input id="apiInput" type="text" placeholder="Enter API URL..." style="width:60%">
+  <button onclick="testCORS()">Test CORS</button>
 
-  <section class="box">
-    <h2>Quick links</h2>
-    <ul>
-      <li><a href="./README.md" target="_blank">README</a></li>
-      <li><a href="./poc.txt" target="_blank">poc.txt</a></li>
-      <li><a href="./curl_requests/" target="_blank">curl_requests/ (scripts)</a></li>
-      <li><a href="./results/" target="_blank">results/ (output files)</a></li>
-    </ul>
-  </section>
+  <pre id="result">Result will appear here...</pre>
 
-  <section class="box">
-    <h2>How to run scripts locally (safe, read‑only)</h2>
-    <ol>
-      <li>Clone this repo or download the files.</li>
-      <li>Open terminal in the repository folder and make scripts executable:
-        <pre><code>chmod +x curl_requests/*.sh</code></pre>
-      </li>
-      <li>Run the preflight (OPTIONS) check and save results:
-        <pre><code>./curl_requests/preflight_options.sh &gt; results/preflight_options_output.txt 2&gt;&amp;1</code></pre>
-      </li>
-      <li>Run GET headers check:
-        <pre><code>./curl_requests/get_requests.sh &gt; results/get_requests_output.txt 2&gt;&amp;1</code></pre>
-      </li>
-      <li>Sanitize headers before sharing (remove cookies/tokens): see README or run:
-        <pre><code>sed -E '/Set-Cookie:/Id; /Authorization:/Id' results/get__api_v1_user_profile_headers.txt &gt; results/get__api_v1_user_profile_headers.sanitized.txt</code></pre>
-      </li>
-    </ol>
-    <p class="muted">Important: Always use a test account you own (no funds) and avoid any write operations (no transfers, trades, deposits, withdrawals).</p>
-  </section>
-
-  <section class="box">
-    <h2>If you want a PoC page that actually performs the fetch()</h2>
-    <p>If you'd like a live PoC that executes <code>fetch(..., {credentials: 'include'})</code> from this page, I can provide a separate safe <code>index-poc.html</code> (and instructions). That page must be used only while you are logged in with your test account in the same browser. Let me know and I'll add it.</p>
-  </section>
-
-  <footer style="margin-top:20px; color:#666; font-size:13px">
-    <div>Created for responsible testing — keep tests read-only and follow the program brief.</div>
-  </footer>
+  <script>
+    async function testCORS() {
+      const url = document.getElementById('apiInput').value.trim();
+      const out = document.getElementById('result');
+      out.textContent = 'Testing... ' + url;
+      try {
+        const res = await fetch(url, { method: 'GET', credentials: 'include' });
+        out.textContent = 'Status: ' + res.status + '\\n';
+        for (const [k, v] of res.headers.entries()) {
+          out.textContent += k + ': ' + v + '\\n';
+        }
+      } catch (err) {
+        out.textContent = '❌ Error: ' + err.message;
+      }
+    }
+  </script>
 </body>
 </html>
